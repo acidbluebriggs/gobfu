@@ -1,0 +1,84 @@
+name: Build and Release
+
+on:
+  push:
+    tags:
+      - 'v*' # Trigger on version tags (v1.0.0, etc.)
+
+jobs:
+  build:
+    name: Build and Release
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Set up Go
+        uses: actions/setup-go@v4
+        with:
+          go-version: '1.21'
+
+      - name: Debug directory structure
+        run: |
+          echo "Current directory: $(pwd)"
+          echo "Repository contents:"
+          ls -la
+          echo "Go files in repository:"
+          find . -type f -name "*.go" | sort
+
+      - name: Build binaries for multiple platforms
+        run: |
+          # Create directories
+          mkdir -p dist
+          
+          # Find the main package
+          MAIN_FILE=$(find . -type f -name "*.go" -exec grep -l "func main" {} \; | head -1)
+          echo "Found main file: $MAIN_FILE"
+          
+          if [ -z "$MAIN_FILE" ]; then
+            echo "No main function found in any Go file"
+            exit 1
+          fi
+          
+          # Build for Linux (amd64)
+          GOOS=linux GOARCH=amd64 go build -o dist/gobfu-linux-amd64 .
+          tar -czf dist/gobfu-linux-amd64.tar.gz -C dist gobfu-linux-amd64
+          rm dist/gobfu-linux-amd64
+          
+          # Build for Linux (arm64)
+          GOOS=linux GOARCH=arm64 go build -o dist/gobfu-linux-arm64 .
+          tar -czf dist/gobfu-linux-arm64.tar.gz -C dist gobfu-linux-arm64
+          rm dist/gobfu-linux-arm64
+          
+          # Build for macOS (amd64)
+          GOOS=darwin GOARCH=amd64 go build -o dist/gobfu-darwin-amd64 .
+          zip dist/gobfu-darwin-amd64.zip dist/gobfu-darwin-amd64
+          rm dist/gobfu-darwin-amd64
+          
+          # Build for macOS (arm64 - Apple Silicon)
+          GOOS=darwin GOARCH=arm64 go build -o dist/gobfu-darwin-arm64 .
+          zip dist/gobfu-darwin-arm64.zip dist/gobfu-darwin-arm64
+          rm dist/gobfu-darwin-arm64
+          
+          # Build for Windows (amd64)
+          GOOS=windows GOARCH=amd64 go build -o dist/gobfu-windows-amd64.exe .
+          zip dist/gobfu-windows-amd64.zip dist/gobfu-windows-amd64.exe
+          rm dist/gobfu-windows-amd64.exe
+
+      - name: Create Release
+        uses: softprops/action-gh-release@v1
+        with:
+          files: |
+            dist/gobfu-linux-amd64.tar.gz
+            dist/gobfu-linux-arm64.tar.gz
+            dist/gobfu-darwin-amd64.zip
+            dist/gobfu-darwin-arm64.zip
+            dist/gobfu-windows-amd64.zip
+          draft: false
+          prerelease: false
+          generate_release_notes: true
+          token: ${{ secrets.GITHUB_TOKEN }}

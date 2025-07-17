@@ -1,0 +1,113 @@
+addresses:
+  address_1:
+    type: text
+    source: address-1
+  address_2:
+    type: text
+    source: address-2
+  city:
+    type: text
+    source: city
+  state:
+    type: text
+    source: state
+  zip:
+    type: text
+    source: zip-codes
+  message:
+    type: text
+    source: word
+  location:
+    type: jsonb
+    source: geo-location
+contact:
+  phone:
+    type: text
+    source: phone-numbers
+  referral_note:
+    type: text
+    source: null
+  external_client_id:
+    type: text
+    source: guid
+  email:
+    type: text
+    source: email
+contact_detail:
+  note:
+    type: text
+    source: word
+prospect:
+  city:
+    type: text
+    source: city
+  source:
+    type: text
+    source: word
+  memo:
+    type: text
+    source: word
+billing:
+  invoice_details:
+    type: text
+    source: word
+request:
+  comments:
+    type: text
+    source: chats
+location:
+  address:
+    type: jsonb
+    source: jsonb-address
+download:
+  link:
+    type: text
+    source: url
+file:
+  url:
+    type: text
+    source: url
+  notes:
+    type: text
+    source: chats
+  name:
+    type: text
+    source: business
+notification:
+  title:
+    type: text
+    source: word
+  body:
+    type: text
+    source: word
+payout:
+  file:
+    type: text
+    source: url
+business_attachment:
+  url:
+    type: text
+    source: word
+token:
+  entry:
+    type: text
+    source: word
+user:
+  date_of_birth:
+    type: date
+    source: birth-date
+  email:
+    type: text
+    source: email
+  first_name:
+    type: text
+    source: first-name
+  last_name:
+    type: text
+    source: last-name
+  password:
+    type: text
+    source: word
+  phone:
+    type: text
+    source: phone-numbers

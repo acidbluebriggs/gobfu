@@ -1,0 +1,2 @@
+*.gsql linguist-language=sql
+example-output.sql -linguist-detectable

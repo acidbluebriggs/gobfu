@@ -1,0 +1,35 @@
+# A Go text template for create a temporary table, with the template placeholders to be used
+# for "Inserts" and "Updates" within the transaction, and lifecycle of the temp table
+# used for database obfuscation. This file will be built-in/embedded within the gobfu binary.
+
+BEGIN;
+
+CREATE TEMP TABLE gobfuscator_anon_data
+(
+    idx   integer NOT NULL,
+    kind  TEXT    NOT NULL,
+    value TEXT    NOT NULL,
+    PRIMARY KEY (idx, kind)
+);
+
+CREATE TEMP TABLE temp_gobfuscator_data_census AS
+SELECT 0::bigint as total, ''::text as kind WHERE false;
+
+-- Populate census table
+INSERT INTO temp_gobfuscator_data_census
+SELECT count(*) as total, kind
+FROM gobfuscator_anon_data
+GROUP BY kind;
+
+-- Insert the obfuscation data for the temporary table --
+
+{{ .Inserts }}
+
+-- Obfuscation updates go here --
+
+{{ .Updates }}
+
+DROP TABLE gobfuscator_anon_data;
+DROP TABLE temp_gobfuscator_data_census;
+
+COMMIT;

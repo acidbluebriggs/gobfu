@@ -1,0 +1,11 @@
+/tmp
+.idea/
+*.iml
+full-stack
+full
+**/config.json
+**/*.out
+*.gob
+/bin
+/conf
+/tmp
