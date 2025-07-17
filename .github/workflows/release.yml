@@ -35,38 +35,29 @@ jobs:
           # Create directories
           mkdir -p dist
           
-          # Find the main package
-          MAIN_FILE=$(find . -type f -name "*.go" -exec grep -l "func main" {} \; | head -1)
-          echo "Found main file: $MAIN_FILE"
-          
-          if [ -z "$MAIN_FILE" ]; then
-            echo "No main function found in any Go file"
-            exit 1
-          fi
-          
           # Build for Linux (amd64)
-          GOOS=linux GOARCH=amd64 go build -o dist/gobfu-linux-amd64 .
-          tar -czf dist/gobfu-linux-amd64.tar.gz -C dist gobfu-linux-amd64
+          GOOS=linux GOARCH=amd64 go build -o dist/gobfu-linux-amd64 ./cmd/gobfu
+          cd dist && tar -czf gobfu-linux-amd64.tar.gz gobfu-linux-amd64 && cd ..
           rm dist/gobfu-linux-amd64
           
           # Build for Linux (arm64)
-          GOOS=linux GOARCH=arm64 go build -o dist/gobfu-linux-arm64 .
-          tar -czf dist/gobfu-linux-arm64.tar.gz -C dist gobfu-linux-arm64
+          GOOS=linux GOARCH=arm64 go build -o dist/gobfu-linux-arm64 ./cmd/gobfu
+          cd dist && tar -czf gobfu-linux-arm64.tar.gz gobfu-linux-arm64 && cd ..
           rm dist/gobfu-linux-arm64
           
           # Build for macOS (amd64)
-          GOOS=darwin GOARCH=amd64 go build -o dist/gobfu-darwin-amd64 .
-          zip dist/gobfu-darwin-amd64.zip dist/gobfu-darwin-amd64
+          GOOS=darwin GOARCH=amd64 go build -o dist/gobfu-darwin-amd64 ./cmd/gobfu
+          cd dist && zip gobfu-darwin-amd64.zip gobfu-darwin-amd64 && cd ..
           rm dist/gobfu-darwin-amd64
           
           # Build for macOS (arm64 - Apple Silicon)
-          GOOS=darwin GOARCH=arm64 go build -o dist/gobfu-darwin-arm64 .
-          zip dist/gobfu-darwin-arm64.zip dist/gobfu-darwin-arm64
+          GOOS=darwin GOARCH=arm64 go build -o dist/gobfu-darwin-arm64 ./cmd/gobfu
+          cd dist && zip gobfu-darwin-arm64.zip gobfu-darwin-arm64 && cd ..
           rm dist/gobfu-darwin-arm64
           
           # Build for Windows (amd64)
-          GOOS=windows GOARCH=amd64 go build -o dist/gobfu-windows-amd64.exe .
-          zip dist/gobfu-windows-amd64.zip dist/gobfu-windows-amd64.exe
+          GOOS=windows GOARCH=amd64 go build -o dist/gobfu-windows-amd64.exe ./cmd/gobfu
+          cd dist && zip gobfu-windows-amd64.zip gobfu-windows-amd64.exe && cd ..
           rm dist/gobfu-windows-amd64.exe
 
       - name: Create Release
